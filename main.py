@@ -53,7 +53,7 @@ def updateH(v, w, h, threads_number, beta=2):
 
 
 if __name__ == '__main__':
-    image = cv2.imread("bear.png", cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread("putin.png", cv2.IMREAD_GRAYSCALE)
     ret, bwImage = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV)
 
     imgHeight = bwImage[0].size
