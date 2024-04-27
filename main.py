@@ -53,7 +53,7 @@ def updateH(v, w, h, threads_number, beta=2):
 
 
 if __name__ == '__main__':
-    image = cv2.imread("putin.png", cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread("bear.png", cv2.IMREAD_GRAYSCALE)
     ret, bwImage = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV)
 
     imgHeight = bwImage[0].size
@@ -68,24 +68,25 @@ if __name__ == '__main__':
     bwImage = cv2.resize(bwImage, (imgHeight, imgWidth))
 
     v = splitImage(bwImage, charNumVertical, charNumHorizontal)
-
-
     h = np.random.uniform(0, 1, (MatrixW.columnNum, totalCharNum))
+
+    result = [['' for _ in range(charNumHorizontal)] for _ in range(charNumVertical)]
 
     for i in range(ITERATIONS_COUNT):
         updateH(v, MatrixW.wNorm, h, THREADS_NUMBER)
 
-    result = [['' for _ in range(charNumHorizontal)] for _ in range(charNumVertical)]
+        if i == 10 or i == 25 or i == 50:
+            for j in range(h.shape[1]):
+                max = 0.0
+                maxIndex = 0
+                for n in range(h.shape[0]):
+                    if max < h[n][j]:
+                        max = h[n][j]
+                        maxIndex = n
+                result[j // charNumHorizontal][j % charNumHorizontal] = chr(MatrixW.firstAsciiCharCode + maxIndex) if (
+                            max >= 0.2) else ' '
 
-
-    for j in range(h.shape[1]):
-        max = 0.0
-        maxIndex = 0
-        for i in range(h.shape[0]):
-            if max < h[i][j]:
-                max = h[i][j]
-                maxIndex = i
-        result[j // charNumHorizontal][j % charNumHorizontal] = chr(MatrixW.firstAsciiCharCode + maxIndex) if (max >= 0.2) else ' '
-
-    for i in range(charNumVertical):
-        print(*result[i], sep='')
+            for k in range(charNumVertical):
+                print(*result[k], sep='')
+            print()
+            print()
