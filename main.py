@@ -1,11 +1,11 @@
 import cv2
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 from sklearn.preprocessing import normalize
 
 import MatrixW
 
-ITERATIONS_COUNT = 20
+ITERATIONS_COUNT = 51
 THREADS_NUMBER = 8
 
 
@@ -46,14 +46,14 @@ def updateH(v, w, h, threads_number, beta=2):
             else:
                 h[j][k] = h[j][k] * numerator
 
-    with ProcessPoolExecutor(threads_number) as p:
+    with ThreadPoolExecutor(threads_number) as p:
         p.map(updateRow, range(h.shape[0]))
 
     return h
 
 
 if __name__ == '__main__':
-    image = cv2.imread("slon.png", cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread("putin.png", cv2.IMREAD_GRAYSCALE)
     ret, bwImage = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV)
 
     imgHeight = bwImage[0].size
@@ -74,8 +74,6 @@ if __name__ == '__main__':
 
     for i in range(ITERATIONS_COUNT):
         updateH(v, MatrixW.wNorm, h, THREADS_NUMBER)
-
-    print(h)
 
     result = [['' for _ in range(charNumHorizontal)] for _ in range(charNumVertical)]
 
